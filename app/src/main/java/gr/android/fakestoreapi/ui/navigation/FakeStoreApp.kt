@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import gr.android.fakestoreapi.ui.home.HomeScreen
 import gr.android.fakestoreapi.ui.splash.SplashScreen
 
 @Composable
@@ -50,7 +51,8 @@ fun FakeStoreNavHost(
                     navController = navController,
                     startDestination = Screen.SplashScreen.route.value,
                 ) {
-                    navigateToSplashScreen(navController)
+                    navigateToSplashScreen(navController = navController)
+                    navigateToHomeScreen(navController = navController)
                 }
             }
         }
@@ -63,6 +65,18 @@ private fun NavGraphBuilder.navigateToSplashScreen(
     navController: NavHostController
 ) {
     composable(route = Screen.SplashScreen.route.value) {
-        SplashScreen()
+        SplashScreen(
+            navigate = {
+                navController.navigate(Screen.HomeScreen.route.value)
+            }
+        )
+    }
+}
+
+private fun NavGraphBuilder.navigateToHomeScreen(
+    navController: NavHostController
+) {
+    composable(route = Screen.HomeScreen.route.value) {
+        HomeScreen()
     }
 }
