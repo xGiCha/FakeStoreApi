@@ -1,11 +1,9 @@
 package gr.android.fakestoreapi.ui.splash
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import gr.android.fakestoreapi.R
 import gr.android.fakestoreapi.domain.usecases.SilentLoginUseCase
-import gr.android.fakestoreapi.ui.BaseViewModel
 import gr.android.fakestoreapi.ui.BaseViewModelImpl
 import gr.android.fakestoreapi.ui.emitAsync
 import kotlinx.coroutines.delay

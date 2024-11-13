@@ -28,38 +28,28 @@ class LoginViewModel @Inject constructor(
  private val loginUseCase: LoginUseCase
 ) : BaseViewModelImpl<LoginContract.State, LoginContract.Event>() {
 
-    private val refreshFlow: MutableSharedFlow<Unit> = MutableSharedFlow(replay = 1)
     private val isLoading = MutableStateFlow(false)
     private val error: MutableStateFlow<String?> = MutableStateFlow(null)
     private val lastState = MutableStateFlow<LoginContract.State?>(null)
     private val _errorMessage = MutableStateFlow<String?>(null)
 
-    init {
-        viewModelScope.launch {
-            refreshFlow.emit(Unit)
-        }
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
     private val result: StateFlow<LoginContract.State?> =
-        refreshFlow.flatMapLatest {
-            combine(
-                _errorMessage
-            ) { (error) ->
-                LoginContract.State.Data(
-                    screenInfo = LoginContract.State.Data.ScreenInfo(
-                        loginTitle = R.string.login_title,
-                        buttonText = R.string.login_btn_text,
-                        passwordField = R.string.password_field,
-                        userNameField = R.string.user_name_field,
-                        userIcon = R.drawable.ic_user,
-                        lockIcon = R.drawable.ic_lock,
-                        visibilityIcon = Icons.Default.Visibility,
-                        visibilityOffIcon = Icons.Default.VisibilityOff,
-                        errorMessage = error.orEmpty()
-                    )
+        combine(
+            _errorMessage
+        ) { (error) ->
+            LoginContract.State.Data(
+                screenInfo = LoginContract.State.Data.ScreenInfo(
+                    loginTitle = R.string.login_title,
+                    buttonText = R.string.login_btn_text,
+                    passwordField = R.string.password_field,
+                    userNameField = R.string.user_name_field,
+                    userIcon = R.drawable.ic_user,
+                    lockIcon = R.drawable.ic_lock,
+                    visibilityIcon = Icons.Default.Visibility,
+                    visibilityOffIcon = Icons.Default.VisibilityOff,
+                    errorMessage = error.orEmpty()
                 )
-            }
+            )
         }.onEach {
             isLoading.value = false
             error.value = null
