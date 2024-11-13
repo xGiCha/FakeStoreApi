@@ -6,6 +6,7 @@ interface SplashContract {
 
     sealed interface Event {
         data object NavigateToHomeScreen : Event
+        data object NavigateToLoginScreen : Event
     }
 
     sealed interface State {

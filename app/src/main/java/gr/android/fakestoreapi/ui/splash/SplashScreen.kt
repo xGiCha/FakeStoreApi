@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 sealed interface SplashNavigation {
     data object NavigateToHome: SplashNavigation
+    data object LoginToHome: SplashNavigation
 }
 
 @Composable
@@ -30,6 +31,10 @@ fun SplashScreen(
           when(event){
               SplashContract.Event.NavigateToHomeScreen -> {
                   navigate(SplashNavigation.NavigateToHome)
+              }
+
+              SplashContract.Event.NavigateToLoginScreen -> {
+                  navigate(SplashNavigation.LoginToHome)
               }
           }
       }

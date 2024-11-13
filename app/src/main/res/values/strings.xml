@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">FakeStoreApi</string>
+    <string name="login_title">Welcome Back!</string>
+    <string name="user_name_field">Username or Email</string>
+    <string name="password_field">Password</string>
+    <string name="login_btn_text">Login</string>
 </resources>

@@ -21,6 +21,7 @@ sealed class Screen(
     }
     data object SplashScreen : Screen(Route("splashScreen"))
     data object HomeScreen : Screen(Route("homeScreen"))
+    data object LoginScreen : Screen(Route("loginScreen"))
 //    data object DetailsScreen : Screen(Route("detailsScreen")) {
 //        internal const val ARGUMENT_CHARACTER_ID = "characterId"
 //

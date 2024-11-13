@@ -18,6 +18,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import gr.android.fakestoreapi.ui.home.HomeScreen
+import gr.android.fakestoreapi.ui.login.LoginNavigation
+import gr.android.fakestoreapi.ui.login.LoginScreen
+import gr.android.fakestoreapi.ui.splash.SplashNavigation
 import gr.android.fakestoreapi.ui.splash.SplashScreen
 
 @Composable
@@ -52,6 +55,7 @@ fun FakeStoreNavHost(
                     startDestination = Screen.SplashScreen.route.value,
                 ) {
                     navigateToSplashScreen(navController = navController)
+                    navigateToLoginScreen(navController = navController)
                     navigateToHomeScreen(navController = navController)
                 }
             }
@@ -67,7 +71,33 @@ private fun NavGraphBuilder.navigateToSplashScreen(
     composable(route = Screen.SplashScreen.route.value) {
         SplashScreen(
             navigate = {
-                navController.navigate(Screen.HomeScreen.route.value)
+                when(it){
+                    SplashNavigation.LoginToHome -> {
+                        navController.navigate(Screen.LoginScreen.route.value) {
+                            popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                        }
+
+                    }
+                    SplashNavigation.NavigateToHome -> {
+                        goHomeAndClearBackStack(navController)
+                    }
+                }
+            }
+        )
+    }
+}
+
+private fun NavGraphBuilder.navigateToLoginScreen(
+    navController: NavHostController
+) {
+    composable(route = Screen.LoginScreen.route.value) {
+        LoginScreen(
+            navigate = {
+                when(it){
+                    LoginNavigation.NavigateToHome -> {
+                        goHomeAndClearBackStack(navController)
+                    }
+                }
             }
         )
     }
@@ -78,5 +108,14 @@ private fun NavGraphBuilder.navigateToHomeScreen(
 ) {
     composable(route = Screen.HomeScreen.route.value) {
         HomeScreen()
+    }
+}
+
+private fun goHomeAndClearBackStack(navController: NavHostController) {
+    navController.navigate(Screen.HomeScreen.route.value) {
+        popUpTo(0) {
+            inclusive = true
+        }
+        launchSingleTop = true
     }
 }

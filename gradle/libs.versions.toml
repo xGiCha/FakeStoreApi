@@ -32,6 +32,9 @@ mockk = "1.13.9"
 roboele = "4.9"
 serialization = "1.6.3"
 hiltAndroidViewModel ="1.2.0"
+constraintlayoutComposeAndroid = "1.1.0"
+composeExtended = "1.7.5"
+datastoreCoreAndroid = "1.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -75,11 +78,14 @@ securePrefs = { module = "androidx.security:security-crypto-ktx", version.ref = 
 moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 coilSvg = { module = "io.coil-kt:coil-svg", version.ref = "coil" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+compose-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "composeExtended" }
 
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 roboelectric ={module = "org.robolectric:robolectric", version.ref = "roboele"}
+androidx-constraintlayout-compose-android = { group = "androidx.constraintlayout", name = "constraintlayout-compose-android", version.ref = "constraintlayoutComposeAndroid" }
+androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastoreCoreAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
