@@ -4,7 +4,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import gr.android.fakestoreapi.data.network.LoginApi
+import gr.android.fakestoreapi.data.network.services.LoginApi
+import gr.android.fakestoreapi.data.network.services.ProductsApi
 import gr.android.fakestoreapi.utils.Constants.BASE_URL
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -56,6 +57,12 @@ object NetworkModule {
     @Provides
     fun provideApiService(retrofit: Retrofit): LoginApi {
         return retrofit.create(LoginApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideProductsApi(retrofit: Retrofit): ProductsApi {
+        return retrofit.create(ProductsApi::class.java)
     }
 
 }

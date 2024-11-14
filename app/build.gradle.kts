@@ -73,6 +73,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.compose.extended)
+    implementation(libs.flow.combinetuple.kt)
 
     // hilt
     implementation(libs.hilt.android)

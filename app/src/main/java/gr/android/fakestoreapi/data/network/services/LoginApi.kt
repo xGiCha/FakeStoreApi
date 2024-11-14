@@ -1,4 +1,4 @@
-package gr.android.fakestoreapi.data.network
+package gr.android.fakestoreapi.data.network.services
 
 import gr.android.fakestoreapi.data.network.models.allUsers.UserDto
 import gr.android.fakestoreapi.data.network.models.login.LoginDTO

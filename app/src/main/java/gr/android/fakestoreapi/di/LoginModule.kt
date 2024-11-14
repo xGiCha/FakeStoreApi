@@ -11,12 +11,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import gr.android.fakestoreapi.data.local.SessionPreferences
-import gr.android.fakestoreapi.data.network.LoginApi
-import gr.android.fakestoreapi.data.repositories.LoginRepositoryImpl
+import gr.android.fakestoreapi.data.network.services.LoginApi
+import gr.android.fakestoreapi.data.repositories.login.LoginRepositoryImpl
 import gr.android.fakestoreapi.domain.repository.LoginRepository
-import gr.android.fakestoreapi.utils.Constants.BASE_URL
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module

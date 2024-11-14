@@ -35,6 +35,7 @@ hiltAndroidViewModel ="1.2.0"
 constraintlayoutComposeAndroid = "1.1.0"
 composeExtended = "1.7.5"
 datastoreCoreAndroid = "1.1.1"
+flowCombinetupleKt = "1.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -86,6 +87,7 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 roboelectric ={module = "org.robolectric:robolectric", version.ref = "roboele"}
 androidx-constraintlayout-compose-android = { group = "androidx.constraintlayout", name = "constraintlayout-compose-android", version.ref = "constraintlayoutComposeAndroid" }
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastoreCoreAndroid" }
+flow-combinetuple-kt = { module = "com.github.Zhuinden:flow-combinetuple-kt", version.ref = "flowCombinetupleKt" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

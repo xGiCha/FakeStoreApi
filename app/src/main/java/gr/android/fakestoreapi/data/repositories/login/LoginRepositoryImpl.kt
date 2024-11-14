@@ -1,7 +1,7 @@
-package gr.android.fakestoreapi.data.repositories
+package gr.android.fakestoreapi.data.repositories.login
 
 import gr.android.fakestoreapi.data.local.SessionPreferences
-import gr.android.fakestoreapi.data.network.LoginApi
+import gr.android.fakestoreapi.data.network.services.LoginApi
 import gr.android.fakestoreapi.data.network.models.login.LoginRequest
 import gr.android.fakestoreapi.domain.repository.LoginRepository
 import gr.android.fakestoreapi.utils.Outcome
