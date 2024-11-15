@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -67,7 +68,7 @@ fun SearchModal(
             },
             placeholder = {
                 Text(
-                    text = "Search any Product...",
+                    text = stringResource(R.string.search),
                     color = PlaceholderGray,
                     fontSize = 16.sp
                 )
