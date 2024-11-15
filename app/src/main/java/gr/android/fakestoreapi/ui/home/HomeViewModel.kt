@@ -90,7 +90,6 @@ class HomeViewModel @Inject constructor(
                         toolRightIconVisibility = true
                     )
                 ),
-                searchText = searchText.orEmpty(),
                 categories = categories.orEmpty(),
                 selectedCategory = selectedCategory.orEmpty(),
                 carouselItems = productImages.orEmpty(),

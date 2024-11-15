@@ -17,7 +17,6 @@ interface HomeContract {
         @Stable
         data class Data(
             val homeScreenInfo: HomeScreenInfo,
-            val searchText: String? = null,
             val categories: List<String>,
             val selectedCategory: String,
             val carouselItems: List<Pair<Int?, String>>,

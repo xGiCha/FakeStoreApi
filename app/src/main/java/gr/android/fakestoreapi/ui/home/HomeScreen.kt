@@ -1,5 +1,7 @@
 package gr.android.fakestoreapi.ui.home
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -13,8 +15,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,13 +59,10 @@ fun HomeScreen(
         is HomeContract.State.Data -> {
             HomeScreenContent(
                 homeScreenInfo = state.homeScreenInfo,
-                currentSearchText = state.searchText,
                 onSearchTextChange = {
                     homeViewModel.setSearchText(it)
                 },
-                onSearch = {
-
-                },
+                onSearch = {},
                 categories = state.categories,
                 onCategorySelected = {
                     homeViewModel.selectedCategory(it)
@@ -84,7 +86,6 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenContent(
     homeScreenInfo: HomeScreenInfo,
-    currentSearchText: String?,
     onSearchTextChange: (String) -> Unit,
     onSearch: () -> Unit,
     categories: List<String>,
@@ -95,10 +96,20 @@ private fun HomeScreenContent(
     navigate: (HomeNavigation) -> Unit,
 ) {
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                focusManager.clearFocus()
+                keyboardController?.hide()
+            }
     ) {
         TopBarModal(
             leftIconVisibility = homeScreenInfo.toolbarInfo.toolLeftIconVisibility
@@ -114,7 +125,6 @@ private fun HomeScreenContent(
                 Spacer(modifier = Modifier.fillMaxWidth().height(4.dp))
                 SearchModal(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    currentSearchText = currentSearchText,
                     onSearchTextChange = onSearchTextChange,
                     onSearch = onSearch
                 )
@@ -206,7 +216,6 @@ private fun HomeScreenContentPreview() {
                 toolRightIconVisibility = true
             )
         ),
-        currentSearchText = "",
         onSearchTextChange = {},
         onSearch = {},
         categories = listOf("electronics", "clothes"),

@@ -1,5 +1,6 @@
 package gr.android.fakestoreapi.ui.composables
 
+import androidx.compose.animation.slideOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -37,14 +38,14 @@ import gr.android.fakestoreapi.ui.theme.PlaceholderGray
 @Composable
 fun SearchModal(
     modifier: Modifier = Modifier,
-    currentSearchText: String?,
     onSearchTextChange: (String) -> Unit,
     onSearch: () -> Unit,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     val isTextFieldFocused = remember { mutableStateOf(false) }
-    val keyboardController = LocalSoftwareKeyboardController.current
+    val searchText = remember { mutableStateOf("") }
 
     Row(
         modifier = modifier
@@ -52,17 +53,16 @@ fun SearchModal(
             .padding(horizontal = 12.dp)
             .shadow(elevation = 4.dp, shape = RoundedCornerShape(16.dp), clip = false)
             .clickable {
-                // Hide keyboard and clear focus when clicking outside the TextField
                 focusManager.clearFocus()
                 keyboardController?.hide()
             },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = CenterVertically
     ) {
-        // Search TextField
         TextField(
-            value = currentSearchText.orEmpty(),
+            value = searchText.value,
             onValueChange = {
+                searchText.value = it
                 onSearchTextChange(it)
             },
             placeholder = {
@@ -119,7 +119,6 @@ fun SearchModal(
 @Composable
 private fun SearchModalPreview() {
     SearchModal(
-        currentSearchText = "",
         onSearchTextChange = {},
         onSearch = {},
     )
