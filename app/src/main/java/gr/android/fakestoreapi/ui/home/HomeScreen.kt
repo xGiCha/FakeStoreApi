@@ -24,9 +24,11 @@ import gr.android.fakestoreapi.R
 import gr.android.fakestoreapi.ui.composables.CarouseItemModal
 import gr.android.fakestoreapi.ui.composables.CarouselModal
 import gr.android.fakestoreapi.ui.composables.CategoryItemModal
+import gr.android.fakestoreapi.ui.composables.ProductHorizontalList
 import gr.android.fakestoreapi.ui.composables.SearchModal
 import gr.android.fakestoreapi.ui.composables.TopBarModal
 import gr.android.fakestoreapi.ui.home.HomeContract.State.Data.HomeScreenInfo
+import gr.android.fakestoreapi.ui.home.HomeViewModel.Companion.All_ITEMS
 
 @Composable
 fun HomeScreen(
@@ -49,7 +51,8 @@ fun HomeScreen(
                     homeViewModel.selectedCategory(it)
                 },
                 selectedCategory = state.selectedCategory,
-                carouselItems = state.carouselItems.orEmpty()
+                carouselItems = state.carouselItems,
+                products = state.products
             )
         }
         else -> {}
@@ -66,7 +69,9 @@ private fun HomeScreenContent(
     onCategorySelected: (String) -> Unit,
     selectedCategory: String,
     carouselItems: List<String>,
+    products: Map<String, List<HomeContract.State.Data.Product>>?,
 ) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -120,6 +125,21 @@ private fun HomeScreenContent(
                     paddingValues = PaddingValues(0.dp)
                 )
             }
+
+            items(categories) { category ->
+                val productsInCategory = products?.get(category)
+                if (productsInCategory?.isNotEmpty() == true) {
+                    Spacer(modifier = Modifier.fillMaxWidth().height(25.dp))
+                    ProductHorizontalList(
+                        productsInCategory = productsInCategory,
+                        onProductClick = {}
+                    )
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.fillMaxWidth().height(40.dp))
+            }
         }
     }
 }
@@ -127,6 +147,19 @@ private fun HomeScreenContent(
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenContentPreview() {
+
+    val products = listOf(
+        HomeContract.State.Data.Product(
+            "All",
+            id = 5,
+            title = "Woman Printed Kurta",
+            image = "",
+            description = "Neque porro quisquam est qui dolorem ipsum quia",
+            price = "1500"
+        ))
+
+    val dummyProducts = products.groupBy { it.category }
+
     HomeScreenContent(
         HomeScreenInfo(
             allFeaturedTitle = "All Featured",
@@ -145,6 +178,7 @@ private fun HomeScreenContentPreview() {
         categories = listOf("electronics", "clothes"),
         onCategorySelected = {},
         selectedCategory = "electronics",
-        carouselItems = listOf("https://performance.ford.com/content/fordracing/home/performance-vehicles/_jcr_content/par/fr_external_link_com_522722112/image.img.jpg/1682003426508.jpg")
+        carouselItems = listOf("https://performance.ford.com/content/fordracing/home/performance-vehicles/_jcr_content/par/fr_external_link_com_522722112/image.img.jpg/1682003426508.jpg"),
+        products = dummyProducts
     )
 }

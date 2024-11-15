@@ -1,7 +1,6 @@
 package gr.android.fakestoreapi.ui.home
 
 import androidx.compose.runtime.Stable
-import gr.android.fakestoreapi.R
 
 interface HomeContract {
 
@@ -22,6 +21,7 @@ interface HomeContract {
             val categories: List<String>,
             val selectedCategory: String,
             val carouselItems: List<String>,
+            val products: Map<String, List<Product>>?,
         ): State {
             data class HomeScreenInfo(
                 val allFeaturedTitle: String,
@@ -36,6 +36,15 @@ interface HomeContract {
                     val toolRightIconVisibility: Boolean
                 )
             }
+
+            data class Product(
+                val category: String,
+                val description: String,
+                val id: Int,
+                val image: String,
+                val price: String,
+                val title: String
+            )
         }
     }
 }

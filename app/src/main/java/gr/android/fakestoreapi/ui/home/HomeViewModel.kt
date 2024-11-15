@@ -1,6 +1,5 @@
 package gr.android.fakestoreapi.ui.home
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.zhuinden.flowcombinetuplekt.combineTuple
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +22,6 @@ import javax.inject.Inject
 import gr.android.fakestoreapi.ui.home.HomeContract.State.Data.HomeScreenInfo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.mapLatest
-import kotlin.math.truncate
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -38,7 +36,7 @@ class HomeViewModel @Inject constructor(
     private val _productCategories = MutableSharedFlow<List<String>?>(replay = 1)
     private val _products = MutableSharedFlow<List<ProductDomainModel>?>(replay = 1)
     private val _searchText = MutableStateFlow<String?>("")
-    private val _selectedCategory = MutableStateFlow<String?>("All")
+    private val _selectedCategory = MutableStateFlow<String?>(All_ITEMS)
 
     init {
         getProductCategories()
@@ -56,6 +54,29 @@ class HomeViewModel @Inject constructor(
         ).mapLatest { (error, categories, products, searchText, selectedCategory) ->
 
             val productImages = products?.map { it.image.orEmpty() }
+            val productList = products?.mapNotNull {
+                it.takeIf { product -> product.category != null && product.title != null }?.let {
+                    HomeContract.State.Data.Product(
+                        category = it.category.orEmpty(),
+                        description = it.description.orEmpty(),
+                        id = it.id ?: -1,
+                        image = it.image.orEmpty(),
+                        price = (it.price ?: 0.0).toString() + " €",
+                        title = it.title.orEmpty()
+                    )
+                }
+            }.orEmpty()
+
+            // Filter products based on selected category and searchText
+            val filteredProducts = productList
+                .filter { product ->
+                    (selectedCategory == All_ITEMS || product.category == selectedCategory) &&
+                            (searchText.isNullOrEmpty() || product.title.contains(searchText, ignoreCase = true))
+                }
+
+            // Group filtered products by category
+            val productsByCategory = filteredProducts.groupBy { it.category }
+
             HomeContract.State.Data(
                 homeScreenInfo = HomeScreenInfo(
                     allFeaturedTitle = "All Featured",
@@ -63,7 +84,7 @@ class HomeViewModel @Inject constructor(
                         toolbarLeftIcon = R.drawable.ic_left_arrow,
                         toolMiddleIcon = R.drawable.ic_toolbar,
                         toolRightIcon = R.drawable.ic_profile,
-                        toolLeftIconVisibility = true,
+                        toolLeftIconVisibility = false,
                         toolMiddleIconVisibility = true,
                         toolRightIconVisibility = true
                     )
@@ -71,7 +92,8 @@ class HomeViewModel @Inject constructor(
                 searchText = searchText.orEmpty(),
                 categories = categories.orEmpty(),
                 selectedCategory = selectedCategory.orEmpty(),
-                carouselItems = productImages.orEmpty()
+                carouselItems = productImages.orEmpty(),
+                products = productsByCategory
             )
         }.onEach {
             isLoading.value = false
@@ -128,10 +150,16 @@ class HomeViewModel @Inject constructor(
     }
 
     fun setSearchText(text: String) {
+        if(text.isNotEmpty())
+            selectedCategory(All_ITEMS)
         _searchText.value = text
     }
 
     fun selectedCategory(category: String) {
+        setSearchText("")
         _selectedCategory.value = category
+    }
+    companion object {
+        const val All_ITEMS = "All"
     }
 }
