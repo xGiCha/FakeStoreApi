@@ -90,7 +90,7 @@ private fun HomeScreenContent(
     categories: List<String>,
     onCategorySelected: (String) -> Unit,
     selectedCategory: String,
-    carouselItems: List<String>,
+    carouselItems: List<Pair<Int?, String>>,
     products: Map<String, List<HomeContract.State.Data.Product>>?,
     navigate: (HomeNavigation) -> Unit,
 ) {
@@ -146,7 +146,10 @@ private fun HomeScreenContent(
                 CarouselModal(
                     item = { pagerState, index ->
                         CarouseItemModal(
-                            imageUrl = carouselItems[index]
+                            item = carouselItems[index],
+                            onClick = {
+                                navigate(HomeNavigation.NavigateToDetails(it))
+                            }
                         )
                     },
                     size = carouselItems.size,
@@ -209,7 +212,7 @@ private fun HomeScreenContentPreview() {
         categories = listOf("electronics", "clothes"),
         onCategorySelected = {},
         selectedCategory = "electronics",
-        carouselItems = listOf("https://performance.ford.com/content/fordracing/home/performance-vehicles/_jcr_content/par/fr_external_link_com_522722112/image.img.jpg/1682003426508.jpg"),
+        carouselItems = listOf(Pair(1, "https://performance.ford.com/content/fordracing/home/performance-vehicles/_jcr_content/par/fr_external_link_com_522722112/image.img.jpg/1682003426508.jpg")),
         products = dummyProducts,
         navigate = {}
     )

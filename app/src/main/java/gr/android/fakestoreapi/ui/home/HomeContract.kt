@@ -20,7 +20,7 @@ interface HomeContract {
             val searchText: String? = null,
             val categories: List<String>,
             val selectedCategory: String,
-            val carouselItems: List<String>,
+            val carouselItems: List<Pair<Int?, String>>,
             val products: Map<String, List<Product>>?,
         ): State {
             data class HomeScreenInfo(

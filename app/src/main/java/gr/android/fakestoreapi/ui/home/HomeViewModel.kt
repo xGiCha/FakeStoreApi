@@ -54,7 +54,7 @@ class HomeViewModel @Inject constructor(
             _selectedCategory
         ).mapLatest { (error, categories, products, searchText, selectedCategory) ->
 
-            val productImages = products?.map { it.image.orEmpty() }
+            val productImages = products?.map { it.id to it.image.orEmpty() }
             val productList = products?.mapNotNull {
                 it.takeIf { product -> product.category != null && product.title != null }?.let {
                     HomeContract.State.Data.Product(

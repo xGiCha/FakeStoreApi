@@ -2,6 +2,8 @@ package gr.android.fakestoreapi.ui.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,11 +11,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,16 +26,21 @@ import gr.android.fakestoreapi.ui.theme.white
 
 @Composable
 fun CarouseItemModal(
-    imageUrl: String
+    item: Pair<Int?, String>,
+    onClick: (Int) -> Unit,
 ) {
-
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(189.dp),
-
+            .height(189.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                onClick(item.first ?: -1)
+            },
     ) {
         Box(
             modifier = Modifier.fillMaxSize().background(white),
@@ -43,7 +49,7 @@ fun CarouseItemModal(
             Image(
                 painter = rememberAsyncImagePainter(
                     ImageRequest.Builder(LocalContext.current)
-                        .data(data = imageUrl)
+                        .data(data = item.second)
                         .apply(block = fun ImageRequest.Builder.() {
                         placeholder(R.drawable.ic_placeholder)
                             crossfade(true)
@@ -61,6 +67,7 @@ fun CarouseItemModal(
 @Composable
 private fun CarouselItemModalPreview() {
     CarouseItemModal(
-        imageUrl = "https://performance.ford.com/content/fordracing/home/performance-vehicles/_jcr_content/par/fr_external_link_com_522722112/image.img.jpg/1682003426508.jpg"
+        item = Pair(1, "https://performance.ford.com/content/fordracing/home/performance-vehicles/_jcr_content/par/fr_external_link_com_522722112/image.img.jpg/1682003426508.jpg"),
+        onClick = {}
     )
 }
