@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -37,8 +36,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import gr.android.fakestoreapi.R
-import gr.android.fakestoreapi.ui.splash.SplashContract
-import gr.android.fakestoreapi.ui.splash.SplashNavigation
 
 sealed interface LoginNavigation {
     data object NavigateToHome: LoginNavigation
@@ -78,8 +75,8 @@ fun LoginScreenContent(
     screenInfo: LoginContract.State.Data.ScreenInfo,
     onLoginClicked: (username: String, password: String) -> Unit,
 ) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("johnd") }
+    var password by remember { mutableStateOf("m38rmF$") }
     var passwordVisible by remember { mutableStateOf(false) }
 
     Column(

@@ -22,10 +22,10 @@ sealed class Screen(
     data object SplashScreen : Screen(Route("splashScreen"))
     data object HomeScreen : Screen(Route("homeScreen"))
     data object LoginScreen : Screen(Route("loginScreen"))
-//    data object DetailsScreen : Screen(Route("detailsScreen")) {
-//        internal const val ARGUMENT_CHARACTER_ID = "characterId"
-//
-//        fun createRoute(characterId: String): String =
-//            this.route.withArgs(characterId)
-//    }
+    data object ProductDetailsScreen : Screen(Route("productDetailsScreen")) {
+        internal const val ARGUMENT_PRODUCT_ID = "productId"
+
+        fun createRoute(productId: String): String =
+            this.route.withArgs(productId)
+    }
 }

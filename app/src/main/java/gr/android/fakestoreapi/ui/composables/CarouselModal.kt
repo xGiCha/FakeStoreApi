@@ -31,8 +31,8 @@ fun CarouselModal(
     item: @Composable (PagerState, Int) -> Unit,
     size: Int,
     onPageChanged: ((Int) -> Unit)? = null,
-    paddingValues: PaddingValues,
-    spacedBy: Dp = 12.dp,
+    paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp), // Add horizontal padding here
+    spacedBy: Dp = 0.dp,
     alignment: Alignment.Vertical = Alignment.CenterVertically,
     fitPagerContentToParent: Boolean = false,
     userScrollEnabled: () -> Boolean = { true },

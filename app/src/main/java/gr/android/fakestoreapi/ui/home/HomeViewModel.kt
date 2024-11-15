@@ -8,6 +8,7 @@ import gr.android.fakestoreapi.domain.uiModels.ProductDomainModel
 import gr.android.fakestoreapi.domain.usecases.CategoriesUseCase
 import gr.android.fakestoreapi.domain.usecases.ProductsUseCase
 import gr.android.fakestoreapi.ui.BaseViewModelImpl
+import gr.android.fakestoreapi.ui.emitAsync
 import gr.android.fakestoreapi.utils.Outcome
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -159,6 +160,11 @@ class HomeViewModel @Inject constructor(
         setSearchText("")
         _selectedCategory.value = category
     }
+
+    fun navigateToDetails(productId: Int){
+        events.emitAsync(HomeContract.Event.NavigateToDetailsScreen(productId = productId))
+    }
+
     companion object {
         const val All_ITEMS = "All"
     }

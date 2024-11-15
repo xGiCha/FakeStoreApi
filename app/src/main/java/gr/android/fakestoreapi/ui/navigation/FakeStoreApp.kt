@@ -14,12 +14,18 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import gr.android.fakestoreapi.ui.detalis.ProductDetailsScreen
+import gr.android.fakestoreapi.ui.detalis.ProductDetailsScreenNavigation
+import gr.android.fakestoreapi.ui.home.HomeNavigation
 import gr.android.fakestoreapi.ui.home.HomeScreen
 import gr.android.fakestoreapi.ui.login.LoginNavigation
 import gr.android.fakestoreapi.ui.login.LoginScreen
+import gr.android.fakestoreapi.ui.navigation.Screen.LoginScreen.withArgsFormat
 import gr.android.fakestoreapi.ui.splash.SplashNavigation
 import gr.android.fakestoreapi.ui.splash.SplashScreen
 
@@ -57,6 +63,7 @@ fun FakeStoreNavHost(
                     navigateToSplashScreen(navController = navController)
                     navigateToLoginScreen(navController = navController)
                     navigateToHomeScreen(navController = navController)
+                    navigateToProductDetailsScreen(navController = navController)
                 }
             }
         }
@@ -107,7 +114,43 @@ private fun NavGraphBuilder.navigateToHomeScreen(
     navController: NavHostController
 ) {
     composable(route = Screen.HomeScreen.route.value) {
-        HomeScreen()
+        HomeScreen(
+            navigate = {
+                when(it) {
+                    is HomeNavigation.NavigateToDetails -> {
+                        navController.navigate(Screen.ProductDetailsScreen.createRoute(it.productId.toString()))
+                    }
+                }
+            }
+        )
+    }
+}
+
+private fun NavGraphBuilder.navigateToProductDetailsScreen(
+    navController: NavHostController
+) {
+    composable(
+        route = Screen.ProductDetailsScreen.route.withArgsFormat(
+            Screen.ProductDetailsScreen.ARGUMENT_PRODUCT_ID,
+        ),
+        arguments = listOf(navArgument(Screen.ProductDetailsScreen.ARGUMENT_PRODUCT_ID) {
+            type = NavType.StringType
+            nullable = false
+        })
+    ) { backStackEntry ->
+        val productId =
+            backStackEntry.arguments?.getString(Screen.ProductDetailsScreen.ARGUMENT_PRODUCT_ID)
+        ProductDetailsScreen(
+            productId = productId?.toInt(),
+            navigate = {
+                when(it) {
+                    ProductDetailsScreenNavigation.OnBack -> {
+                        navController.popBackStack()
+                    }
+                }
+            }
+        )
+
     }
 }
 

@@ -36,6 +36,7 @@ import gr.android.fakestoreapi.ui.theme.PlaceholderGray
 
 @Composable
 fun SearchModal(
+    modifier: Modifier = Modifier,
     currentSearchText: String?,
     onSearchTextChange: (String) -> Unit,
     onSearch: () -> Unit,
@@ -46,7 +47,7 @@ fun SearchModal(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
             .shadow(elevation = 4.dp, shape = RoundedCornerShape(16.dp), clip = false)

@@ -4,4 +4,7 @@
     <string name="user_name_field">Username or Email</string>
     <string name="password_field">Password</string>
     <string name="login_btn_text">Login</string>
+
+    <string name="product_details_title">Product Details</string>
+    <string name="read_more">Read More</string>
 </resources>

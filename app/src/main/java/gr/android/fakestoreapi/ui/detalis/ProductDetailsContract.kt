@@ -1,11 +1,12 @@
-package gr.android.fakestoreapi.ui.home
+package gr.android.fakestoreapi.ui.detalis
 
 import androidx.compose.runtime.Stable
 
-interface HomeContract {
+interface ProductDetailsContract {
 
     sealed interface Event {
-        data class NavigateToDetailsScreen(val productId: Int) : Event
+        data object NavigateToEditProductScreen : Event
+        data object OnBack: Event
     }
 
     sealed interface State {
@@ -16,16 +17,13 @@ interface HomeContract {
 
         @Stable
         data class Data(
-            val homeScreenInfo: HomeScreenInfo,
-            val searchText: String? = null,
-            val categories: List<String>,
-            val selectedCategory: String,
-            val carouselItems: List<String>,
-            val products: Map<String, List<Product>>?,
+            val productDetailsScreenInfo: ProductDetailsScreenInfo,
+            val products: Product?,
         ): State {
-            data class HomeScreenInfo(
-                val allFeaturedTitle: String,
-                val toolbarInfo: ToolBarInfo,
+
+            data class ProductDetailsScreenInfo(
+                val title: Int,
+                val toolBarInfo: ToolBarInfo,
             ) {
                 data class ToolBarInfo(
                     val toolbarLeftIcon: Int,

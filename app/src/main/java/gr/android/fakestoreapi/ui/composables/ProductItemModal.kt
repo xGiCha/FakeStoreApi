@@ -3,6 +3,7 @@ package gr.android.fakestoreapi.ui.composables
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -13,6 +14,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -39,7 +41,10 @@ fun ProductItemModal(
 ) {
     Card(
         modifier = Modifier
-            .clickable {
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+        ) {
                 onProductClick(product)
             },
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
@@ -49,8 +54,7 @@ fun ProductItemModal(
             modifier = Modifier
                 .background(Color.White)
                 .width(170.dp)
-                .height(270.dp),
-            horizontalAlignment = CenterHorizontally,
+                .height(250.dp),
         ) {
             Image(
                 painter = rememberAsyncImagePainter(
@@ -73,18 +77,10 @@ fun ProductItemModal(
                 modifier = Modifier.padding(4.dp),
                 text = product.title,
                 maxLines = 2,
+                minLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
-                style = TextStyle(lineHeightStyle = lineHeightStyleDefault)
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                modifier = Modifier.padding(4.dp),
-                text = product.description,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                fontSize = 10.sp,
                 style = TextStyle(lineHeightStyle = lineHeightStyleDefault)
             )
 
@@ -98,7 +94,7 @@ fun ProductItemModal(
                 style = TextStyle(lineHeightStyle = lineHeightStyleDefault)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 modifier = Modifier.padding(4.dp),
                 text = product.price,

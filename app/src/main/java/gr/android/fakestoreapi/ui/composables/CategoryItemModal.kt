@@ -32,12 +32,13 @@ import gr.android.fakestoreapi.R
 
 @Composable
 fun CategoryItemModal(
+    modifier: Modifier = Modifier,
     categories: List<String>,
     onCategorySelected: (String) -> Unit,
     categorySelected: String
 ) {
     LazyRow(
-        Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(categories) { category ->

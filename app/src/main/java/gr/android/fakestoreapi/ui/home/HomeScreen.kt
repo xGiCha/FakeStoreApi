@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -28,12 +29,26 @@ import gr.android.fakestoreapi.ui.composables.ProductHorizontalList
 import gr.android.fakestoreapi.ui.composables.SearchModal
 import gr.android.fakestoreapi.ui.composables.TopBarModal
 import gr.android.fakestoreapi.ui.home.HomeContract.State.Data.HomeScreenInfo
-import gr.android.fakestoreapi.ui.home.HomeViewModel.Companion.All_ITEMS
+
+sealed interface HomeNavigation {
+    data class NavigateToDetails(val productId: Int): HomeNavigation
+}
 
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel = hiltViewModel()
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    navigate: (HomeNavigation) -> Unit
 ) {
+
+    LaunchedEffect(homeViewModel.events) {
+        homeViewModel.events.collect { event ->
+            when(event){
+                is HomeContract.Event.NavigateToDetailsScreen -> {
+                    navigate(HomeNavigation.NavigateToDetails(event.productId))
+                }
+            }
+        }
+    }
 
     when(val state = homeViewModel.uiState.collectAsStateWithLifecycle().value) {
         is HomeContract.State.Data -> {
@@ -52,7 +67,14 @@ fun HomeScreen(
                 },
                 selectedCategory = state.selectedCategory,
                 carouselItems = state.carouselItems,
-                products = state.products
+                products = state.products,
+                navigate = {
+                    when(it){
+                        is HomeNavigation.NavigateToDetails -> {
+                            homeViewModel.navigateToDetails(it.productId)
+                        }
+                    }
+                }
             )
         }
         else -> {}
@@ -70,6 +92,7 @@ private fun HomeScreenContent(
     selectedCategory: String,
     carouselItems: List<String>,
     products: Map<String, List<HomeContract.State.Data.Product>>?,
+    navigate: (HomeNavigation) -> Unit,
 ) {
 
     Column(
@@ -83,20 +106,24 @@ private fun HomeScreenContent(
 
         Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
 
-        SearchModal(
-            currentSearchText = currentSearchText,
-            onSearchTextChange = onSearchTextChange,
-            onSearch = onSearch
-        )
-
-        Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
-
         LazyColumn(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .fillMaxSize(),
         ) {
             item {
+                Spacer(modifier = Modifier.fillMaxWidth().height(4.dp))
+                SearchModal(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    currentSearchText = currentSearchText,
+                    onSearchTextChange = onSearchTextChange,
+                    onSearch = onSearch
+                )
+                Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
+            }
+
+            item {
                 Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     text = homeScreenInfo.allFeaturedTitle,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -107,6 +134,7 @@ private fun HomeScreenContent(
             item {
                 Spacer(modifier = Modifier.fillMaxWidth().height(25.dp))
                 CategoryItemModal(
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     categories = categories,
                     categorySelected = selectedCategory,
                     onCategorySelected = onCategorySelected
@@ -122,7 +150,8 @@ private fun HomeScreenContent(
                         )
                     },
                     size = carouselItems.size,
-                    paddingValues = PaddingValues(0.dp)
+                    paddingValues = PaddingValues(horizontal = 16.dp), // Horizontal padding at the start
+                    spacedBy = 16.dp
                 )
             }
 
@@ -132,7 +161,9 @@ private fun HomeScreenContent(
                     Spacer(modifier = Modifier.fillMaxWidth().height(25.dp))
                     ProductHorizontalList(
                         productsInCategory = productsInCategory,
-                        onProductClick = {}
+                        onProductClick = {
+                            navigate(HomeNavigation.NavigateToDetails(it.id))
+                        }
                     )
                 }
             }
@@ -179,6 +210,7 @@ private fun HomeScreenContentPreview() {
         onCategorySelected = {},
         selectedCategory = "electronics",
         carouselItems = listOf("https://performance.ford.com/content/fordracing/home/performance-vehicles/_jcr_content/par/fr_external_link_com_522722112/image.img.jpg/1682003426508.jpg"),
-        products = dummyProducts
+        products = dummyProducts,
+        navigate = {}
     )
 }
