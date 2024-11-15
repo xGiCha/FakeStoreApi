@@ -19,10 +19,13 @@ interface HomeContract {
         data class Data(
             val homeScreenInfo: HomeScreenInfo,
             val searchText: String? = null,
+            val categories: List<String>,
+            val selectedCategory: String,
+            val carouselItems: List<String>,
         ): State {
             data class HomeScreenInfo(
                 val allFeaturedTitle: String,
-                val toolbarInfo: ToolBarInfo
+                val toolbarInfo: ToolBarInfo,
             ) {
                 data class ToolBarInfo(
                     val toolbarLeftIcon: Int,

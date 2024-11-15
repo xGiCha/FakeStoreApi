@@ -1,5 +1,6 @@
 package gr.android.fakestoreapi.ui.home
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.zhuinden.flowcombinetuplekt.combineTuple
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,7 @@ import javax.inject.Inject
 import gr.android.fakestoreapi.ui.home.HomeContract.State.Data.HomeScreenInfo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.mapLatest
+import kotlin.math.truncate
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -36,6 +38,7 @@ class HomeViewModel @Inject constructor(
     private val _productCategories = MutableSharedFlow<List<String>?>(replay = 1)
     private val _products = MutableSharedFlow<List<ProductDomainModel>?>(replay = 1)
     private val _searchText = MutableStateFlow<String?>("")
+    private val _selectedCategory = MutableStateFlow<String?>("All")
 
     init {
         getProductCategories()
@@ -48,11 +51,14 @@ class HomeViewModel @Inject constructor(
             _errorMessage,
             _productCategories,
             _products,
-            _searchText
-        ).mapLatest { (error, categories, products, searchText) ->
+            _searchText,
+            _selectedCategory
+        ).mapLatest { (error, categories, products, searchText, selectedCategory) ->
+
+            val productImages = products?.map { it.image.orEmpty() }
             HomeContract.State.Data(
                 homeScreenInfo = HomeScreenInfo(
-                    allFeaturedTitle = "test",
+                    allFeaturedTitle = "All Featured",
                     toolbarInfo = HomeScreenInfo.ToolBarInfo(
                         toolbarLeftIcon = R.drawable.ic_left_arrow,
                         toolMiddleIcon = R.drawable.ic_toolbar,
@@ -62,7 +68,10 @@ class HomeViewModel @Inject constructor(
                         toolRightIconVisibility = true
                     )
                 ),
-                searchText = searchText.orEmpty()
+                searchText = searchText.orEmpty(),
+                categories = categories.orEmpty(),
+                selectedCategory = selectedCategory.orEmpty(),
+                carouselItems = productImages.orEmpty()
             )
         }.onEach {
             isLoading.value = false
@@ -120,5 +129,9 @@ class HomeViewModel @Inject constructor(
 
     fun setSearchText(text: String) {
         _searchText.value = text
+    }
+
+    fun selectedCategory(category: String) {
+        _selectedCategory.value = category
     }
 }
