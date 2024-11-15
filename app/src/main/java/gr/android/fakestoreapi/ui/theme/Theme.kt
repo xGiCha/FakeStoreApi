@@ -22,15 +22,10 @@ private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Pink40,
-
-//     Other default colors to override
-    background = white,
-//    surface = Color(0xFFFFFBFE),
-//    onPrimary = Color.White,
-//    onSecondary = Color.White,
-//    onTertiary = Color.White,
-//    onBackground = Color(0xFF1C1B1F),
-//    onSurface = Color(0xFF1C1B1F),
+    background = Color.White, // Ensures the background is white
+    surface = Color.White, // Ensures surfaces also have a white background
+    onBackground = Color.Black, // Text color for background
+    onSurface = Color.Black // Text color for surfaces
 )
 
 @Composable
@@ -43,7 +38,7 @@ fun FakeStoreApiTheme(
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            if (darkTheme) dynamicDarkColorScheme(context) else LightColorScheme
         }
 
         darkTheme -> DarkColorScheme

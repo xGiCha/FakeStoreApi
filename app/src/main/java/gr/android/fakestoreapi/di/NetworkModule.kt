@@ -22,13 +22,16 @@ object NetworkModule {
     // which is used for logging HTTP requests and responses
     @Singleton
     @Provides
-    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor()
-
+    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
+        return HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+    }
     @Singleton
     @Provides
     fun provideHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
-        httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         return OkHttpClient.Builder()
+            .addInterceptor(httpLoggingInterceptor)
             .readTimeout(15, TimeUnit.SECONDS)
             .connectTimeout(15, TimeUnit.SECONDS)
             .build()

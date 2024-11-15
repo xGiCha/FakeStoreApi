@@ -50,7 +50,7 @@ fun ProductItemModal(
                 .background(Color.White)
                 .width(170.dp)
                 .height(270.dp),
-            horizontalAlignment = Alignment.Start,
+            horizontalAlignment = CenterHorizontally,
         ) {
             Image(
                 painter = rememberAsyncImagePainter(
@@ -66,7 +66,7 @@ fun ProductItemModal(
                     .width(170.dp)
                     .height(124.dp)
                     .align(CenterHorizontally),
-                contentScale = ContentScale.FillBounds
+                contentScale = ContentScale.Fit
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(

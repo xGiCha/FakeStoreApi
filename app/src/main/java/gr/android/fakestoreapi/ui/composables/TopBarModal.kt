@@ -2,6 +2,7 @@ package gr.android.fakestoreapi.ui.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,43 +29,46 @@ fun TopBarModal(
     middleIconVisibility: Boolean = true,
     rightIconVisibility: Boolean = true
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
+    Column {
+        Spacer(modifier = Modifier.fillMaxWidth().height(8.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp, horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
 
-        if (leftIconVisibility) {
-            Image(
-                painter = painterResource(id = leftIcon),
-                contentDescription = "Left Image",
-                modifier = Modifier.size(24.dp)
-            )
-        }
+            if (leftIconVisibility) {
+                Image(
+                    painter = painterResource(id = leftIcon),
+                    contentDescription = "Left Image",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
 
-        Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-        // Center Image
-        if (middleIconVisibility) {
-            Image(
-                painter = painterResource(id = middleIcon),
-                contentDescription = "Center Logo",
-                modifier = Modifier.height(30.dp).width(110.dp)
-            )
-        }
+            // Center Image
+            if (middleIconVisibility) {
+                Image(
+                    painter = painterResource(id = middleIcon),
+                    contentDescription = "Center Logo",
+                    modifier = Modifier.height(30.dp).width(110.dp)
+                )
+            }
 
-        Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-        // Right Image
-        if (rightIconVisibility) {
-            Image(
-                painter = painterResource(id = rightIcon),
-                contentDescription = "Right Image",
-                modifier = Modifier.size(40.dp)
-                    .clip(CircleShape)
-            )
+            // Right Image
+            if (rightIconVisibility) {
+                Image(
+                    painter = painterResource(id = rightIcon),
+                    contentDescription = "Right Image",
+                    modifier = Modifier.size(40.dp)
+                        .clip(CircleShape)
+                )
+            }
         }
     }
 }
