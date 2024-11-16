@@ -40,6 +40,10 @@ class HomeViewModel @Inject constructor(
     private val _selectedCategory = MutableStateFlow<String?>(All_ITEMS)
 
     init {
+        refresh()
+    }
+
+    fun refresh() {
         getProductCategories()
         getProducts()
     }
@@ -111,7 +115,7 @@ class HomeViewModel @Inject constructor(
             } else if (isLoading) {
                 HomeContract.State.Loading
             } else {
-                result ?: HomeContract.State.Error("No info retrieved")
+                result
             }
             lastState.value = response
             response
@@ -140,7 +144,7 @@ class HomeViewModel @Inject constructor(
             productsUseCase.invoke().collectLatest {
                 when(it){
                     is Outcome.Error -> {
-                        _errorMessage.emit(it.message)
+                        error.emit(it.message)
                     }
                     is Outcome.Loading -> {}
                     is Outcome.Success -> _products.emit(it.data)
