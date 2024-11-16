@@ -18,7 +18,7 @@ interface ProductDetailsContract {
         @Stable
         data class Data(
             val productDetailsScreenInfo: ProductDetailsScreenInfo,
-            val products: Product?,
+            val product: Product?,
         ): State {
 
             data class ProductDetailsScreenInfo(

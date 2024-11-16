@@ -1,11 +1,9 @@
 package gr.android.fakestoreapi.ui.detalis
 
 import androidx.lifecycle.viewModelScope
-import com.zhuinden.flowcombinetuplekt.combineTuple
 import dagger.hilt.android.lifecycle.HiltViewModel
 import gr.android.fakestoreapi.R
 import gr.android.fakestoreapi.domain.uiModels.ProductDomainModel
-import gr.android.fakestoreapi.domain.usecases.CategoriesUseCase
 import gr.android.fakestoreapi.domain.usecases.ProductsUseCase
 import gr.android.fakestoreapi.ui.BaseViewModelImpl
 import gr.android.fakestoreapi.ui.detalis.ProductDetailsContract.State.Data.ProductDetailsScreenInfo
@@ -22,20 +20,15 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import gr.android.fakestoreapi.ui.home.HomeContract.State.Data.HomeScreenInfo
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.mapLatest
 
 @HiltViewModel
 class ProductDetailsViewModel @Inject constructor(
-    private val categoriesUseCase: CategoriesUseCase,
     private val productsUseCase: ProductsUseCase
 ) : BaseViewModelImpl<ProductDetailsContract.State, ProductDetailsContract.Event>() {
 
     private val isLoading = MutableStateFlow(false)
     private val error: MutableStateFlow<String?> = MutableStateFlow(null)
     private val lastState = MutableStateFlow<ProductDetailsContract.State?>(null)
-    private val _errorMessage = MutableStateFlow<String?>(null)
     private val _productId = MutableStateFlow<Int?>(null)
     private val _products = MutableSharedFlow<List<ProductDomainModel>?>(replay = 1)
 
@@ -45,10 +38,9 @@ class ProductDetailsViewModel @Inject constructor(
 
     private val result: StateFlow<ProductDetailsContract.State?> =
         combine(
-            _errorMessage,
             _products,
             _productId
-        ) { error, products, productId ->
+        ) { products, productId ->
             val product = products?.find  { it.id == productId }
 
             ProductDetailsContract.State.Data(
@@ -63,7 +55,7 @@ class ProductDetailsViewModel @Inject constructor(
                         toolRightIconVisibility = true
                     )
                 ),
-                products = product?.let {
+                product = product?.let {
                     ProductDetailsContract.State.Data.Product (
                         category = it.category.orEmpty(),
                         description = it.description.orEmpty(),
@@ -72,7 +64,7 @@ class ProductDetailsViewModel @Inject constructor(
                         price = (it.price ?: 0.0).toString() + " €",
                         title = it.title.orEmpty()
                     )
-                }
+                },
             )
         }.onEach {
             isLoading.value = false
@@ -105,7 +97,7 @@ class ProductDetailsViewModel @Inject constructor(
             productsUseCase.invoke().collectLatest {
                 when(it){
                     is Outcome.Error -> {
-                        _errorMessage.emit(it.message)
+                        error.emit(it.message)
                     }
                     is Outcome.Loading -> {}
                     is Outcome.Success -> _products.emit(it.data)
@@ -122,4 +114,8 @@ class ProductDetailsViewModel @Inject constructor(
     fun onBack(){
         events.emitAsync(ProductDetailsContract.Event.OnBack)
     }
+    fun navigateToDetailsScreen(){
+        events.emitAsync(ProductDetailsContract.Event.NavigateToEditProductScreen)
+    }
+
 }

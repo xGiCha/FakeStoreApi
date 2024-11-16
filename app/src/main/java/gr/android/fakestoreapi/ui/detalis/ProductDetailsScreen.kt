@@ -3,7 +3,6 @@ package gr.android.fakestoreapi.ui.detalis
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -67,7 +66,7 @@ fun ProductDetailsScreen(
     when (val state = productDetailsViewModel.uiState.collectAsStateWithLifecycle().value) {
         is ProductDetailsContract.State.Data -> {
             ProductDetailsScreenContent(
-                product = state.products,
+                product = state.product,
                 productDetailsScreenInfo = state.productDetailsScreenInfo,
                 navigate = {
                     when (it) {
