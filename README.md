@@ -6,6 +6,7 @@
 + Unit Tests: Ensures the reliability and correctness of the codebase.
 + MVVM (Model-View-ViewModel): Separates UI logic from business logic, promoting a clean architecture.
 + Jetpack Compose: A modern toolkit for building native Android UI.
++ Room Database: A persistence library that provides an abstraction layer over SQLite to allow fluent database access while harnessing the full power of SQLite.
 
 ## Architecture
 ### MVVM Architecture
