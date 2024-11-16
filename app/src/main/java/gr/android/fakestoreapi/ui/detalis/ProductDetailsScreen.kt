@@ -36,6 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import gr.android.fakestoreapi.R
+import gr.android.fakestoreapi.ui.composables.CardModal
 import gr.android.fakestoreapi.ui.composables.TopBarModal
 import gr.android.fakestoreapi.ui.detalis.ProductDetailsContract.State.Data.ProductDetailsScreenInfo.ToolBarInfo
 import gr.android.fakestoreapi.ui.detalis.ProductDetailsContract.State.Data.ProductDetailsScreenInfo
@@ -43,6 +44,7 @@ import gr.android.fakestoreapi.ui.theme.white
 
 sealed interface ProductDetailsScreenNavigation {
     data object OnBack : ProductDetailsScreenNavigation
+    data class NavigateToUpdateProductScreen(val productId: Int) : ProductDetailsScreenNavigation
 }
 
 @Composable
@@ -56,9 +58,11 @@ fun ProductDetailsScreen(
     LaunchedEffect(productDetailsViewModel.events) {
         productDetailsViewModel.events.collect {
             when (it) {
-                ProductDetailsContract.Event.NavigateToEditProductScreen -> {}
                 ProductDetailsContract.Event.OnBack -> {
                     navigate(ProductDetailsScreenNavigation.OnBack)
+                }
+                is ProductDetailsContract.Event.NavigateToUpdateProductScreen -> {
+                    navigate(ProductDetailsScreenNavigation.NavigateToUpdateProductScreen(it.productId))
                 }
             }
         }
@@ -72,6 +76,10 @@ fun ProductDetailsScreen(
                     when (it) {
                         ProductDetailsScreenNavigation.OnBack -> {
                             productDetailsViewModel.onBack()
+                        }
+
+                        is ProductDetailsScreenNavigation.NavigateToUpdateProductScreen -> {
+                            productDetailsViewModel.navigateToDetailsScreen(it.productId)
                         }
                     }
                 }
@@ -91,7 +99,7 @@ fun ProductDetailsScreenContent(
     productDetailsScreenInfo: ProductDetailsScreenInfo,
     navigate: (ProductDetailsScreenNavigation) -> Unit,
 ) {
-    var isExpanded = remember { mutableStateOf(false) }
+    val isExpanded = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -103,6 +111,9 @@ fun ProductDetailsScreenContent(
             rightIconRoundedCorners = RoundedCornerShape(0.dp),
             onBackClick = {
                 navigate(ProductDetailsScreenNavigation.OnBack)
+            },
+            onRightClick = {
+                navigate(ProductDetailsScreenNavigation.NavigateToUpdateProductScreen(productId = product?.id ?: -1))
             }
         )
 
@@ -117,34 +128,9 @@ fun ProductDetailsScreenContent(
                 .verticalScroll(rememberScrollState())
         ) {
 
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(213.dp),
-
-                ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(white),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = rememberAsyncImagePainter(
-                            ImageRequest.Builder(LocalContext.current)
-                                .data(data = product?.image)
-                                .apply(block = fun ImageRequest.Builder.() {
-                                    placeholder(R.drawable.ic_placeholder)
-                                    crossfade(true)
-                                }).build()
-                        ),
-                        contentScale = ContentScale.Fit,
-                        contentDescription = ""
-                    )
-                }
-            }
+            CardModal(
+                image = product?.image.orEmpty()
+            )
 
             Text(
                 modifier = Modifier.padding(top = 55.dp),

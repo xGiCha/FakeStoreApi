@@ -40,7 +40,7 @@ class ProductCategoriesRepositoryImpl(
         coroutineScope.launch {
             try {
                 val data = productsApi.getProductCategories()
-                data.map {
+                data?.map {
                     productCategoriesDao.insertProductCategories(it.toEntity())
                 }
             } catch (e: IOException) {

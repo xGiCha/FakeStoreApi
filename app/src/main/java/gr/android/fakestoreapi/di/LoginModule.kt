@@ -10,15 +10,31 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import gr.android.fakestoreapi.common.annotation.Application
 import gr.android.fakestoreapi.data.local.SessionPreferences
 import gr.android.fakestoreapi.data.network.services.LoginApi
+import gr.android.fakestoreapi.data.repositories.LogoutRepositoryImpl
 import gr.android.fakestoreapi.data.repositories.login.LoginRepositoryImpl
 import gr.android.fakestoreapi.domain.repository.LoginRepository
+import gr.android.fakestoreapi.domain.repository.LogoutRepository
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object LoginModule {
+
+    @Provides
+    @Singleton
+    fun provideLogoutRepository(
+        @Application coroutineScope: CoroutineScope,
+        sessionPreferences: SessionPreferences
+    ): LogoutRepository {
+        return LogoutRepositoryImpl(
+            coroutineScope = coroutineScope,
+            sessionPreferences = sessionPreferences
+        )
+    }
 
     @Provides
     @Singleton

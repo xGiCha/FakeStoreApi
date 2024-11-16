@@ -6,4 +6,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface ProductsRepository {
     val products: Flow<Outcome<List<ProductDomainModel>>>
+
+    suspend fun updateProduct(
+        id: Int,
+        title: String,
+        price: Double,
+        description: String,
+        image: String,
+        category: String
+    ): Outcome<Boolean>
 }

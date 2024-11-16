@@ -31,7 +31,8 @@ fun TopBarModal(
     middleIconVisibility: Boolean = true,
     rightIconVisibility: Boolean = true,
     rightIconRoundedCorners: RoundedCornerShape = CircleShape,
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    onRightClick: () -> Unit = {}
 ) {
     Column {
         Spacer(modifier = Modifier.fillMaxWidth().height(8.dp))
@@ -75,6 +76,9 @@ fun TopBarModal(
                     contentDescription = "Right Image",
                     modifier = Modifier.size(40.dp)
                         .clip(rightIconRoundedCorners)
+                        .clickable {
+                            onRightClick()
+                        }
                 )
             }
         }

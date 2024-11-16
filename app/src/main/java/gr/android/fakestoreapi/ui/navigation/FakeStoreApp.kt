@@ -21,6 +21,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import gr.android.fakestoreapi.ui.detalis.ProductDetailsScreen
 import gr.android.fakestoreapi.ui.detalis.ProductDetailsScreenNavigation
+import gr.android.fakestoreapi.ui.edit.UpdateProductScreen
+import gr.android.fakestoreapi.ui.edit.UpdateProductScreenNavigation
 import gr.android.fakestoreapi.ui.home.HomeNavigation
 import gr.android.fakestoreapi.ui.home.HomeScreen
 import gr.android.fakestoreapi.ui.login.LoginNavigation
@@ -64,6 +66,7 @@ fun FakeStoreNavHost(
                     navigateToLoginScreen(navController = navController)
                     navigateToHomeScreen(navController = navController)
                     navigateToProductDetailsScreen(navController = navController)
+                    navigateToUpdateProductScreen(navController = navController)
                 }
             }
         }
@@ -147,10 +150,40 @@ private fun NavGraphBuilder.navigateToProductDetailsScreen(
                     ProductDetailsScreenNavigation.OnBack -> {
                         navController.popBackStack()
                     }
+
+                    is ProductDetailsScreenNavigation.NavigateToUpdateProductScreen -> {
+                        navController.navigate(Screen.UpdateProductScreen.createRoute(it.productId.toString()))
+                    }
                 }
             }
         )
+    }
+}
 
+private fun NavGraphBuilder.navigateToUpdateProductScreen(
+    navController: NavHostController
+) {
+    composable(
+        route = Screen.UpdateProductScreen.route.withArgsFormat(
+            Screen.UpdateProductScreen.ARGUMENT_PRODUCT_UPDATE_ID,
+        ),
+        arguments = listOf(navArgument(Screen.UpdateProductScreen.ARGUMENT_PRODUCT_UPDATE_ID) {
+            type = NavType.StringType
+            nullable = false
+        })
+    ) { backStackEntry ->
+        val productId =
+            backStackEntry.arguments?.getString(Screen.UpdateProductScreen.ARGUMENT_PRODUCT_UPDATE_ID)
+        UpdateProductScreen(
+            productId = productId?.toInt(),
+            navigate = {
+                when(it) {
+                    UpdateProductScreenNavigation.OnBack -> {
+                        navController.popBackStack()
+                    }
+                }
+            }
+        )
     }
 }
 

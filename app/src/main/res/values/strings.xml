@@ -8,4 +8,9 @@
     <string name="product_details_title">Product Details</string>
     <string name="read_more">Read More</string>
     <string name="search">Search any Product...</string>
+
+    <string name="update_title">Title</string>
+    <string name="update_price">Price</string>
+    <string name="update_category">Category</string>
+    <string name="update_description">Description</string>
 </resources>

@@ -2,8 +2,10 @@ package gr.android.fakestoreapi.ui.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import gr.android.fakestoreapi.R
+import gr.android.fakestoreapi.ui.composables.ButtonModal
 
 sealed interface LoginNavigation {
     data object NavigateToHome: LoginNavigation
@@ -167,24 +170,16 @@ fun LoginScreenContent(
             )
         )
 
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 76.dp),
-            shape = RoundedCornerShape(4.dp),
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(76.dp))
+
+        ButtonModal(
+            text = stringResource(screenInfo.buttonText),
             onClick = {
                 onLoginClicked(username, password)
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF4A57)),
-        ) {
-            Text(
-                modifier = Modifier.padding(vertical = 8.dp),
-                text = stringResource(screenInfo.buttonText),
-                color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
+            }
+        )
 
     }
 }

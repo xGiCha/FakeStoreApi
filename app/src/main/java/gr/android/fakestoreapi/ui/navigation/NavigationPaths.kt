@@ -28,4 +28,10 @@ sealed class Screen(
         fun createRoute(productId: String): String =
             this.route.withArgs(productId)
     }
+    data object UpdateProductScreen : Screen(Route("updateProductScreen")) {
+        internal const val ARGUMENT_PRODUCT_UPDATE_ID = "productUpdateId"
+
+        fun createRoute(productUpdateId: String): String =
+            this.route.withArgs(productUpdateId)
+    }
 }

@@ -30,6 +30,7 @@ import gr.android.fakestoreapi.R
 import gr.android.fakestoreapi.ui.composables.CarouseItemModal
 import gr.android.fakestoreapi.ui.composables.CarouselModal
 import gr.android.fakestoreapi.ui.composables.CategoryItemModal
+import gr.android.fakestoreapi.ui.composables.ErrorMessageModal
 import gr.android.fakestoreapi.ui.composables.ProductHorizontalList
 import gr.android.fakestoreapi.ui.composables.SearchModal
 import gr.android.fakestoreapi.ui.composables.TopBarModal
@@ -112,7 +113,10 @@ private fun HomeScreenContent(
             }
     ) {
         TopBarModal(
-            leftIconVisibility = homeScreenInfo.toolbarInfo.toolLeftIconVisibility
+            leftIconVisibility = homeScreenInfo.toolbarInfo.toolLeftIconVisibility,
+            onBackClick = {
+
+            }
         )
 
         Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))

@@ -5,8 +5,8 @@ import androidx.compose.runtime.Stable
 interface ProductDetailsContract {
 
     sealed interface Event {
-        data object NavigateToEditProductScreen : Event
         data object OnBack: Event
+        data class NavigateToUpdateProductScreen(val productId: Int): Event
     }
 
     sealed interface State {

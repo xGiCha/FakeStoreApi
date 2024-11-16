@@ -114,8 +114,8 @@ class ProductDetailsViewModel @Inject constructor(
     fun onBack(){
         events.emitAsync(ProductDetailsContract.Event.OnBack)
     }
-    fun navigateToDetailsScreen(){
-        events.emitAsync(ProductDetailsContract.Event.NavigateToEditProductScreen)
+    fun navigateToDetailsScreen(productId: Int){
+        events.emitAsync(ProductDetailsContract.Event.NavigateToUpdateProductScreen(productId = productId))
     }
 
 }
