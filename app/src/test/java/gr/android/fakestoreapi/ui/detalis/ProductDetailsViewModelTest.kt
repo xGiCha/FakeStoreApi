@@ -107,10 +107,10 @@ class ProductDetailsViewModelTest: BaseTest() {
     fun `GIVEN product details WHEN pressing edit THEN navigate to edit product screen`() = runTest {
 
         val events = productDetailsViewModel.events.testSubscribe()
-        productDetailsViewModel.navigateToDetailsScreen()
+        productDetailsViewModel.navigateToDetailsScreen(productId = 1)
         events.assertLast {
             assertEquals(
-                ProductDetailsContract.Event.NavigateToEditProductScreen,
+                ProductDetailsContract.Event.NavigateToUpdateProductScreen(1),
                 it
             )
         }.dispose()

@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,6 +62,7 @@ fun ProductDetailsScreen(
                 ProductDetailsContract.Event.OnBack -> {
                     navigate(ProductDetailsScreenNavigation.OnBack)
                 }
+
                 is ProductDetailsContract.Event.NavigateToUpdateProductScreen -> {
                     navigate(ProductDetailsScreenNavigation.NavigateToUpdateProductScreen(it.productId))
                 }
@@ -100,6 +102,7 @@ fun ProductDetailsScreenContent(
     navigate: (ProductDetailsScreenNavigation) -> Unit,
 ) {
     val isExpanded = remember { mutableStateOf(false) }
+    var showReadMore = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -113,13 +116,19 @@ fun ProductDetailsScreenContent(
                 navigate(ProductDetailsScreenNavigation.OnBack)
             },
             onRightClick = {
-                navigate(ProductDetailsScreenNavigation.NavigateToUpdateProductScreen(productId = product?.id ?: -1))
+                navigate(
+                    ProductDetailsScreenNavigation.NavigateToUpdateProductScreen(
+                        productId = product?.id ?: -1
+                    )
+                )
             }
         )
 
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .height(16.dp))
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(16.dp)
+        )
 
         Column(
             modifier = Modifier
@@ -171,25 +180,31 @@ fun ProductDetailsScreenContent(
                     fontWeight = FontWeight.Normal,
                     color = Color.Black,
                     maxLines = if (isExpanded.value) Int.MAX_VALUE else 3,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    onTextLayout = { textLayoutResult: TextLayoutResult ->
+                        // Check if the text exceeds 2 lines when collapsed
+                        showReadMore.value = textLayoutResult.lineCount > 2
+                    }
                 )
 
-                if (!isExpanded.value) {
-                Text(
-                    text = stringResource(R.string.read_more),
-                    color = Color.Blue,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(top = 4.dp)
-                        .clickable { isExpanded.value = !isExpanded.value }
-                )
-                    }
+                if (showReadMore.value && !isExpanded.value && product?.description?.isNotEmpty() == true) {
+                    Text(
+                        text = stringResource(R.string.read_more),
+                        color = Color.Blue,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                            .clickable { isExpanded.value = !isExpanded.value }
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp))
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            )
         }
     }
 }
