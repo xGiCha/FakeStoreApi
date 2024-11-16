@@ -13,4 +13,7 @@
     <string name="update_price">Price</string>
     <string name="update_category">Category</string>
     <string name="update_description">Description</string>
+    <string name="ok">OK</string>
+    <string name="profile_coming_soon">Profile is coming soon...</string>
+    <string name="logout">Logout</string>
 </resources>

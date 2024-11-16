@@ -1,6 +1,5 @@
 package gr.android.fakestoreapi.ui.edit
 
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,13 +19,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role.Companion.Button
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,11 +29,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import gr.android.fakestoreapi.ui.composables.ButtonModal
 import gr.android.fakestoreapi.ui.composables.CardModal
-import gr.android.fakestoreapi.ui.composables.ErrorMessageModal
+import gr.android.fakestoreapi.ui.composables.SmallMessageModal
 import gr.android.fakestoreapi.ui.composables.TopBarModal
 
 sealed interface UpdateProductScreenNavigation {
-    data object OnBack: UpdateProductScreenNavigation
+    data object OnBack : UpdateProductScreenNavigation
 }
 
 @Composable
@@ -62,11 +55,11 @@ fun UpdateProductScreen(
         }
     }
 
-    when(val state = updateProductViewModel.uiState.collectAsStateWithLifecycle().value){
+    when (val state = updateProductViewModel.uiState.collectAsStateWithLifecycle().value) {
         is UpdateProductContract.State.Data -> {
             UpdateProductScreenContent(
                 navigate = {
-                    when(it) {
+                    when (it) {
                         UpdateProductScreenNavigation.OnBack -> {
                             updateProductViewModel.onBack()
                         }
@@ -82,26 +75,15 @@ fun UpdateProductScreen(
                         image = state.product?.image,
                         category = category
                     )
+                },
+                showErrorMessage = state.showErrorMessage,
+                onHideErrorMessage = {
+                    updateProductViewModel.hideErrorMessage()
                 }
             )
         }
 
-        is UpdateProductContract.State.Error -> {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                ErrorMessageModal(
-                    errorMessage = state.value
-                ) {
-                    updateProductViewModel.refresh()
-                }
-            }
-        }
-        else -> {
-
-        }
+        else -> {}
     }
 
 }
@@ -111,11 +93,13 @@ fun UpdateProductScreenContent(
     navigate: (UpdateProductScreenNavigation) -> Unit,
     product: UpdateProductContract.State.Data.Product?,
     onSaveClick: (
-            title: String,
-            price: String,
-            category: String,
-            description: String
+        title: String,
+        price: String,
+        category: String,
+        description: String
     ) -> Unit,
+    showErrorMessage: String,
+    onHideErrorMessage: () -> Unit,
 ) {
     val title = remember { mutableStateOf("") }
     val price = remember { mutableStateOf("") }
@@ -124,17 +108,13 @@ fun UpdateProductScreenContent(
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            .fillMaxSize(),
     ) {
-
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxSize()
         ) {
             TopBarModal(
+                modifier = Modifier,
                 middleIconVisibility = false,
                 leftIconVisibility = true,
                 rightIconVisibility = false,
@@ -143,42 +123,54 @@ fun UpdateProductScreenContent(
                 },
             )
 
-            CardModal(
-                image = product?.image.orEmpty()
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
 
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp))
+                CardModal(
+                    image = product?.image.orEmpty()
+                )
 
-            CustomTextField(
-                label = "Title",
-                value = title.value,
-                onValueChange = { title.value = it }
-            )
-            CustomTextField(
-                label = "Price",
-                value = price.value,
-                onValueChange = { price.value = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-            CustomTextField(
-                label = "Category",
-                value = category.value,
-                onValueChange = { category.value = it }
-            )
-            CustomTextField(
-                label = "Description",
-                value = description.value,
-                onValueChange = { description.value = it }
-            )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                )
 
-            Spacer(modifier = Modifier.height(50.dp))
+                CustomTextField(
+                    label = "Title",
+                    value = title.value,
+                    onValueChange = { title.value = it }
+                )
+                CustomTextField(
+                    label = "Price",
+                    value = price.value,
+                    onValueChange = { price.value = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                CustomTextField(
+                    label = "Category",
+                    value = category.value,
+                    onValueChange = { category.value = it }
+                )
+                CustomTextField(
+                    label = "Description",
+                    value = description.value,
+                    onValueChange = { description.value = it }
+                )
 
+                Spacer(modifier = Modifier.height(50.dp))
+            }
         }
 
         ButtonModal(
-            modifier = Modifier.align(Alignment.BottomCenter),
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.BottomCenter),
             text = "Save",
             onClick = {
                 onSaveClick(
@@ -189,6 +181,15 @@ fun UpdateProductScreenContent(
                 )
             }
         )
+
+        if (showErrorMessage.isNotEmpty()) {
+            SmallMessageModal(
+                errorMessage = showErrorMessage,
+                onClick = {
+                    onHideErrorMessage()
+                }
+            )
+        }
     }
 }
 
@@ -201,9 +202,11 @@ fun CustomTextField(
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = label, fontSize = 14.sp, fontWeight = FontWeight.Medium)
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .height(16.dp))
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(16.dp)
+        )
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
@@ -228,6 +231,8 @@ private fun UpdateProductScreenContentPreview() {
     UpdateProductScreenContent(
         navigate = {},
         product = product,
-        onSaveClick = {_,_,_,_ ->}
+        onSaveClick = { _, _, _, _ -> },
+        showErrorMessage = "",
+        onHideErrorMessage = {}
     )
 }

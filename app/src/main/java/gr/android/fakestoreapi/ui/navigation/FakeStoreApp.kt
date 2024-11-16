@@ -123,6 +123,12 @@ private fun NavGraphBuilder.navigateToHomeScreen(
                     is HomeNavigation.NavigateToDetails -> {
                         navController.navigate(Screen.ProductDetailsScreen.createRoute(it.productId.toString()))
                     }
+
+                    HomeNavigation.NavigateToLoginScreen -> {
+                        navController.navigate(Screen.LoginScreen.route.value) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
                 }
             }
         )

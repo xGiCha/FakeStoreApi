@@ -18,6 +18,7 @@ interface UpdateProductContract {
         data class Data(
             val productDetailsScreenInfo: UpdateProductScreenInfo,
             val product: Product?,
+            val showErrorMessage: String,
         ): State {
 
             data class UpdateProductScreenInfo(

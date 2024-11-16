@@ -3,6 +3,7 @@ package gr.android.fakestoreapi.ui.home
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,14 +34,15 @@ import gr.android.fakestoreapi.R
 import gr.android.fakestoreapi.ui.composables.CarouseItemModal
 import gr.android.fakestoreapi.ui.composables.CarouselModal
 import gr.android.fakestoreapi.ui.composables.CategoryItemModal
-import gr.android.fakestoreapi.ui.composables.ErrorMessageModal
+import gr.android.fakestoreapi.ui.composables.SmallMessageModal
 import gr.android.fakestoreapi.ui.composables.ProductHorizontalList
 import gr.android.fakestoreapi.ui.composables.SearchModal
 import gr.android.fakestoreapi.ui.composables.TopBarModal
 import gr.android.fakestoreapi.ui.home.HomeContract.State.Data.HomeScreenInfo
 
 sealed interface HomeNavigation {
-    data class NavigateToDetails(val productId: Int): HomeNavigation
+    data class NavigateToDetails(val productId: Int) : HomeNavigation
+    data object NavigateToLoginScreen : HomeNavigation
 }
 
 @Composable
@@ -50,15 +53,19 @@ fun HomeScreen(
 
     LaunchedEffect(homeViewModel.events) {
         homeViewModel.events.collect { event ->
-            when(event){
+            when (event) {
                 is HomeContract.Event.NavigateToDetailsScreen -> {
                     navigate(HomeNavigation.NavigateToDetails(event.productId))
+                }
+
+                HomeContract.Event.NavigateToLoginScreen -> {
+                    navigate(HomeNavigation.NavigateToLoginScreen)
                 }
             }
         }
     }
 
-    when(val state = homeViewModel.uiState.collectAsStateWithLifecycle().value) {
+    when (val state = homeViewModel.uiState.collectAsStateWithLifecycle().value) {
         is HomeContract.State.Data -> {
             HomeScreenContent(
                 homeScreenInfo = state.homeScreenInfo,
@@ -74,27 +81,43 @@ fun HomeScreen(
                 carouselItems = state.carouselItems,
                 products = state.products,
                 navigate = {
-                    when(it){
+                    when (it) {
                         is HomeNavigation.NavigateToDetails -> {
                             homeViewModel.navigateToDetails(it.productId)
                         }
+
+                        HomeNavigation.NavigateToLoginScreen -> {}
                     }
+                },
+                onProfileClick = {
+                    homeViewModel.showLogout()
+                },
+                showLogout = state.showLogout,
+                onLogoutClick = {
+                    homeViewModel.logout()
+                    homeViewModel.navigateToLogin()
+                },
+                onHideLogout = {
+                    homeViewModel.hideLogout()
                 }
             )
         }
+
         is HomeContract.State.Error -> {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ErrorMessageModal(
-                    errorMessage = state.value
-                ) {
-                    homeViewModel.refresh()
-                }
+                SmallMessageModal(
+                    errorMessage = state.value,
+                    onClick = {
+                        homeViewModel.refresh()
+                    },
+                )
             }
         }
+
         else -> {}
     }
 }
@@ -110,99 +133,137 @@ private fun HomeScreenContent(
     carouselItems: List<Pair<Int?, String>>,
     products: Map<String, List<HomeContract.State.Data.Product>>?,
     navigate: (HomeNavigation) -> Unit,
+    onProfileClick: () -> Unit,
+    showLogout: Boolean,
+    onLogoutClick: () -> Unit,
+    onHideLogout: () -> Unit,
 ) {
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .imePadding()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                focusManager.clearFocus()
-                keyboardController?.hide()
-            }
     ) {
-        TopBarModal(
-            leftIconVisibility = homeScreenInfo.toolbarInfo.toolLeftIconVisibility,
-            onBackClick = {
-
-            }
-        )
-
-        Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
-
-        LazyColumn(
+        Column(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .imePadding()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                }
         ) {
-            item {
-                Spacer(modifier = Modifier.fillMaxWidth().height(4.dp))
-                SearchModal(
-                    modifier = Modifier,
-                    onSearchTextChange = onSearchTextChange,
-                    onSearch = onSearch
-                )
-                Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
-            }
+            TopBarModal(
+                leftIconVisibility = homeScreenInfo.toolbarInfo.toolLeftIconVisibility,
+                onRightClick = {
+                    onProfileClick()
+                }
+            )
 
-            item {
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = homeScreenInfo.allFeaturedTitle,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black
-                )
-            }
+            Spacer(modifier = Modifier
+                .fillMaxWidth()
+                .height(16.dp))
 
-            item {
-                Spacer(modifier = Modifier.fillMaxWidth().height(25.dp))
-                CategoryItemModal(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    categories = categories,
-                    categorySelected = selectedCategory,
-                    onCategorySelected = onCategorySelected
-                )
-            }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize(),
+            ) {
+                item {
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(4.dp))
+                    SearchModal(
+                        modifier = Modifier,
+                        onSearchTextChange = onSearchTextChange,
+                        onSearch = onSearch
+                    )
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(16.dp))
+                }
 
-            item {
-                Spacer(modifier = Modifier.fillMaxWidth().height(25.dp))
-                CarouselModal(
-                    item = { pagerState, index ->
-                        CarouseItemModal(
-                            item = carouselItems[index],
-                            onClick = {
-                                navigate(HomeNavigation.NavigateToDetails(it))
-                            }
-                        )
-                    },
-                    size = carouselItems.size,
-                    paddingValues = PaddingValues(horizontal = 16.dp), // Horizontal padding at the start
-                    spacedBy = 16.dp
-                )
-            }
-
-            items(categories) { category ->
-                val productsInCategory = products?.get(category)
-                if (productsInCategory?.isNotEmpty() == true) {
-                    Spacer(modifier = Modifier.fillMaxWidth().height(25.dp))
-                    ProductHorizontalList(
-                        productsInCategory = productsInCategory,
-                        onProductClick = {
-                            navigate(HomeNavigation.NavigateToDetails(it.id))
-                        }
+                item {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        text = homeScreenInfo.allFeaturedTitle,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Black
                     )
                 }
-            }
 
-            item {
-                Spacer(modifier = Modifier.fillMaxWidth().height(40.dp))
+                item {
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(25.dp))
+                    CategoryItemModal(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        categories = categories,
+                        categorySelected = selectedCategory,
+                        onCategorySelected = onCategorySelected
+                    )
+                }
+
+                item {
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(25.dp))
+                    CarouselModal(
+                        item = { pagerState, index ->
+                            CarouseItemModal(
+                                item = carouselItems[index],
+                                onClick = {
+                                    navigate(HomeNavigation.NavigateToDetails(it))
+                                }
+                            )
+                        },
+                        size = carouselItems.size,
+                        paddingValues = PaddingValues(horizontal = 16.dp), // Horizontal padding at the start
+                        spacedBy = 16.dp
+                    )
+                }
+
+                items(categories) { category ->
+                    val productsInCategory = products?.get(category)
+                    if (productsInCategory?.isNotEmpty() == true) {
+                        Spacer(modifier = Modifier
+                            .fillMaxWidth()
+                            .height(25.dp))
+                        ProductHorizontalList(
+                            productsInCategory = productsInCategory,
+                            onProductClick = {
+                                navigate(HomeNavigation.NavigateToDetails(it.id))
+                            }
+                        )
+                    }
+                }
+
+                item {
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp))
+                }
             }
+        }
+
+        if (showLogout) {
+            SmallMessageModal(
+                isCloseVisible = true,
+                errorMessage = stringResource(R.string.profile_coming_soon),
+                buttonText = stringResource(R.string.logout),
+                onClick = {
+                    onHideLogout()
+                    onLogoutClick()
+                },
+                onDismiss = {
+                    onHideLogout()
+                }
+            )
         }
     }
 }
@@ -219,7 +280,8 @@ private fun HomeScreenContentPreview() {
             image = "",
             description = "Neque porro quisquam est qui dolorem ipsum quia",
             price = "1500"
-        ))
+        )
+    )
 
     val dummyProducts = products.groupBy { it.category }
 
@@ -240,8 +302,17 @@ private fun HomeScreenContentPreview() {
         categories = listOf("electronics", "clothes"),
         onCategorySelected = {},
         selectedCategory = "electronics",
-        carouselItems = listOf(Pair(1, "https://performance.ford.com/content/fordracing/home/performance-vehicles/_jcr_content/par/fr_external_link_com_522722112/image.img.jpg/1682003426508.jpg")),
+        carouselItems = listOf(
+            Pair(
+                1,
+                "https://performance.ford.com/content/fordracing/home/performance-vehicles/_jcr_content/par/fr_external_link_com_522722112/image.img.jpg/1682003426508.jpg"
+            )
+        ),
         products = dummyProducts,
-        navigate = {}
+        navigate = {},
+        onProfileClick = {},
+        showLogout = false,
+        onLogoutClick = {},
+        onHideLogout = {}
     )
 }

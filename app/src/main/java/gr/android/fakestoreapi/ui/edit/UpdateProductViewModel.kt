@@ -34,6 +34,7 @@ class UpdateProductViewModel @Inject constructor(
     private val error: MutableStateFlow<String?> = MutableStateFlow(null)
     private val lastState = MutableStateFlow<UpdateProductContract.State?>(null)
     private val _productId = MutableStateFlow<Int?>(null)
+    private val _errorMessage = MutableStateFlow<String?>(null)
     private val _products = MutableSharedFlow<List<ProductDomainModel>?>(replay = 1)
 
     init {
@@ -50,8 +51,9 @@ class UpdateProductViewModel @Inject constructor(
         refreshFLow.flatMapLatest {
             combine(
                 _products,
-                _productId
-            ) { products, productId ->
+                _productId,
+                _errorMessage,
+            ) { products, productId, errorMessage ->
                 val product = products?.find { it.id == productId }
 
                 UpdateProductContract.State.Data(
@@ -71,6 +73,7 @@ class UpdateProductViewModel @Inject constructor(
                             title = it.title.orEmpty()
                         )
                     },
+                    showErrorMessage = errorMessage.orEmpty()
                 )
             }
         }.onEach {
@@ -104,7 +107,7 @@ class UpdateProductViewModel @Inject constructor(
             productsUseCase.invoke().collectLatest {
                 when(it){
                     is Outcome.Error -> {
-                        error.emit(it.message)
+                        _errorMessage.emit(it.message)
                     }
                     is Outcome.Loading -> {}
                     is Outcome.Success -> _products.emit(it.data)
@@ -132,7 +135,7 @@ class UpdateProductViewModel @Inject constructor(
             ).collectLatest {
                 when(it) {
                     is Outcome.Error -> {
-                        error.value = it.message
+                        _errorMessage.emit(it.message)
                     }
                     is Outcome.Loading -> {}
                     is Outcome.Success -> {
@@ -148,8 +151,15 @@ class UpdateProductViewModel @Inject constructor(
             _productId.emit(productId)
         }
     }
+
     fun onBack(){
         events.emitAsync(UpdateProductContract.Event.OnBack)
+    }
+
+    fun hideErrorMessage() {
+        viewModelScope.launch {
+            _errorMessage.emit("")
+        }
     }
 
 }

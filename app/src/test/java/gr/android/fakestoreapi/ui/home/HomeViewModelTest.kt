@@ -5,6 +5,7 @@ import gr.android.fakestoreapi.BaseTest
 import gr.android.fakestoreapi.CoroutineTestRule
 import gr.android.fakestoreapi.domain.uiModels.ProductDomainModel
 import gr.android.fakestoreapi.domain.usecases.CategoriesUseCase
+import gr.android.fakestoreapi.domain.usecases.LogoutUseCase
 import gr.android.fakestoreapi.domain.usecases.ProductsUseCase
 import gr.android.fakestoreapi.utils.Outcome
 import io.mockk.MockKAnnotations
@@ -27,6 +28,9 @@ class HomeViewModelTest: BaseTest() {
     @MockK
     lateinit var productsUseCase: ProductsUseCase
 
+    @MockK
+    lateinit var logoutUseCase: LogoutUseCase
+
     private lateinit var homeViewModel: HomeViewModel
 
     @Before
@@ -34,7 +38,8 @@ class HomeViewModelTest: BaseTest() {
         MockKAnnotations.init(this, relaxed = true)
         homeViewModel = HomeViewModel(
             categoriesUseCase = categoriesUseCase,
-            productsUseCase = productsUseCase
+            productsUseCase = productsUseCase,
+            logoutUseCase = logoutUseCase
         )
 
         coEvery { productsUseCase.invoke() } returns flowOf (Outcome.Success(listOf()))

@@ -6,6 +6,7 @@ interface HomeContract {
 
     sealed interface Event {
         data class NavigateToDetailsScreen(val productId: Int) : Event
+        data object NavigateToLoginScreen : Event
     }
 
     sealed interface State {
@@ -21,6 +22,7 @@ interface HomeContract {
             val selectedCategory: String,
             val carouselItems: List<Pair<Int?, String>>,
             val products: Map<String, List<Product>>?,
+            val showLogout: Boolean,
         ): State {
             data class HomeScreenInfo(
                 val allFeaturedTitle: String,

@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import gr.android.fakestoreapi.R
 import gr.android.fakestoreapi.domain.uiModels.ProductDomainModel
 import gr.android.fakestoreapi.domain.usecases.CategoriesUseCase
+import gr.android.fakestoreapi.domain.usecases.LogoutUseCase
 import gr.android.fakestoreapi.domain.usecases.ProductsUseCase
 import gr.android.fakestoreapi.ui.BaseViewModelImpl
 import gr.android.fakestoreapi.ui.emitAsync
@@ -27,7 +28,8 @@ import kotlinx.coroutines.flow.mapLatest
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val categoriesUseCase: CategoriesUseCase,
-    private val productsUseCase: ProductsUseCase
+    private val productsUseCase: ProductsUseCase,
+    private val logoutUseCase: LogoutUseCase,
 ) : BaseViewModelImpl<HomeContract.State, HomeContract.Event>() {
 
     private val isLoading = MutableStateFlow(false)
@@ -38,6 +40,7 @@ class HomeViewModel @Inject constructor(
     private val _products = MutableSharedFlow<List<ProductDomainModel>?>(replay = 1)
     private val _searchText = MutableStateFlow<String?>("")
     private val _selectedCategory = MutableStateFlow<String?>(All_ITEMS)
+    private val _showLogout = MutableStateFlow<Boolean?>(null)
 
     init {
         refresh()
@@ -55,8 +58,9 @@ class HomeViewModel @Inject constructor(
             _productCategories,
             _products,
             _searchText,
-            _selectedCategory
-        ).mapLatest { (error, categories, products, searchText, selectedCategory) ->
+            _selectedCategory,
+            _showLogout
+        ).mapLatest { (error, categories, products, searchText, selectedCategory, showLogout) ->
 
             val productImages = products?.map { it.id to it.image.orEmpty() }
             val productList = products?.mapNotNull {
@@ -97,7 +101,8 @@ class HomeViewModel @Inject constructor(
                 categories = categories.orEmpty(),
                 selectedCategory = selectedCategory.orEmpty(),
                 carouselItems = productImages.orEmpty(),
-                products = productsByCategory
+                products = productsByCategory,
+                showLogout = showLogout ?: false,
             )
         }.onEach {
             isLoading.value = false
@@ -166,6 +171,26 @@ class HomeViewModel @Inject constructor(
 
     fun navigateToDetails(productId: Int){
         events.emitAsync(HomeContract.Event.NavigateToDetailsScreen(productId = productId))
+    }
+
+    fun navigateToLogin(){
+        events.emitAsync(HomeContract.Event.NavigateToLoginScreen)
+    }
+
+    fun showLogout() {
+        viewModelScope.launch {
+            _showLogout.emit(true)
+        }
+    }
+
+    fun hideLogout() {
+        viewModelScope.launch {
+            _showLogout.emit(false)
+        }
+    }
+
+    fun logout() {
+        logoutUseCase.logout()
     }
 
     companion object {

@@ -24,6 +24,7 @@ import gr.android.fakestoreapi.R
 
 @Composable
 fun TopBarModal(
+    modifier: Modifier = Modifier,
     leftIcon: Int = R.drawable.ic_left_arrow,
     middleIcon: Int = R.drawable.ic_toolbar,
     rightIcon: Int = R.drawable.ic_profile,
@@ -32,9 +33,11 @@ fun TopBarModal(
     rightIconVisibility: Boolean = true,
     rightIconRoundedCorners: RoundedCornerShape = CircleShape,
     onBackClick: () -> Unit = {},
-    onRightClick: () -> Unit = {}
+    onRightClick: () -> Unit = {},
 ) {
-    Column {
+    Column(
+        modifier = modifier
+    ) {
         Spacer(modifier = Modifier.fillMaxWidth().height(8.dp))
         Row(
             modifier = Modifier
@@ -74,7 +77,7 @@ fun TopBarModal(
                 Image(
                     painter = painterResource(id = rightIcon),
                     contentDescription = "Right Image",
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(24.dp)
                         .clip(rightIconRoundedCorners)
                         .clickable {
                             onRightClick()
