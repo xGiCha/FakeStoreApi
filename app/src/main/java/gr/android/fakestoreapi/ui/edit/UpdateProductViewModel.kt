@@ -102,7 +102,7 @@ class UpdateProductViewModel @Inject constructor(
             lastState.value
         )
 
-    private fun getProducts() {
+    fun getProducts() {
         viewModelScope.launch {
             productsUseCase.invoke().collectLatest {
                 when(it){
